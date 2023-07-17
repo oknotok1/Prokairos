@@ -24,6 +24,7 @@ export default function Priorities() {
   const [tempPriority, setTempPriority] = useState<string>("");
 
   const toggleModal = (action: string) => {
+    setTempPriority("");
     action === "open" ? setModalVisible(true) : setModalVisible(false);
   };
 
@@ -34,7 +35,7 @@ export default function Priorities() {
       return newPriorities;
     });
 
-    setModalVisible(false);
+    toggleModal("close");
   };
 
   return (
@@ -59,7 +60,6 @@ export default function Priorities() {
             style={styles.input}
             onChangeText={setTempPriority}
             placeholder="Do something"
-            value={topPriorities[selectedPriority] ?? ""}
           />
           <View style={styles.saveButton}>
             <Button title="Save" onPress={handleSubmit} />

@@ -1,7 +1,22 @@
-import { StyleSheet, Text, View } from "react-native";
+import React, { useState } from "react";
+import {
+  Button,
+  Modal,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
+
+interface Timebox {
+  hour: number;
+  firstHalf: string;
+  secondHalf: string;
+}
 
 export default function Timebox() {
-  const timebox = {
+  const [timeboxes, setTimeboxes] = useState<{ [key: number]: Timebox }>({
     1: {
       hour: 5,
       firstHalf: "",
@@ -10,111 +25,183 @@ export default function Timebox() {
     2: {
       hour: 6,
       firstHalf: "",
-      secondHalf: "Wake up",
+      secondHalf: "",
     },
     3: {
       hour: 7,
-      firstHalf: "Breakfast",
-      secondHalf: "Go for a walk",
+      firstHalf: "",
+      secondHalf: "",
     },
     4: {
       hour: 8,
-      firstHalf: "Study",
-      secondHalf: "Study",
+      firstHalf: "",
+      secondHalf: "",
     },
     5: {
       hour: 9,
-      firstHalf: "Break",
-      secondHalf: "Study",
+      firstHalf: "",
+      secondHalf: "",
     },
     6: {
       hour: 10,
-      firstHalf: "Study",
-      secondHalf: "Study",
+      firstHalf: "",
+      secondHalf: "",
     },
     7: {
       hour: 11,
-      firstHalf: "Break",
-      secondHalf: "Lunch",
+      firstHalf: "",
+      secondHalf: "",
     },
     8: {
       hour: 12,
-      firstHalf: "Lunch",
-      secondHalf: "Rest",
+      firstHalf: "",
+      secondHalf: "",
     },
     9: {
       hour: 1,
-      firstHalf: "Rest",
-      secondHalf: "Study",
+      firstHalf: "",
+      secondHalf: "",
     },
     10: {
       hour: 2,
-      firstHalf: "Study",
-      secondHalf: "Study",
+      firstHalf: "",
+      secondHalf: "",
     },
     11: {
       hour: 3,
-      firstHalf: "Break",
-      secondHalf: "Study",
+      firstHalf: "",
+      secondHalf: "",
     },
     12: {
       hour: 4,
-      firstHalf: "Study",
-      secondHalf: "Study",
+      firstHalf: "",
+      secondHalf: "",
     },
     13: {
       hour: 5,
-      firstHalf: "Break",
-      secondHalf: "Study",
+      firstHalf: "",
+      secondHalf: "",
     },
     14: {
       hour: 6,
-      firstHalf: "Go for a walk",
-      secondHalf: "Go for a walk",
+      firstHalf: "",
+      secondHalf: "",
     },
     15: {
       hour: 7,
-      firstHalf: "Dinner",
-      secondHalf: "Dinner",
+      firstHalf: "",
+      secondHalf: "",
     },
     16: {
       hour: 8,
-      firstHalf: "Dinner",
-      secondHalf: "Dinner",
+      firstHalf: "",
+      secondHalf: "",
     },
     17: {
       hour: 9,
-      firstHalf: "Break",
-      secondHalf: "Study",
+      firstHalf: "",
+      secondHalf: "",
     },
     18: {
       hour: 10,
-      firstHalf: "Study",
-      secondHalf: "Study",
+      firstHalf: "",
+      secondHalf: "",
     },
     19: {
       hour: 11,
-      firstHalf: "Break",
-      secondHalf: "Study",
+      firstHalf: "",
+      secondHalf: "",
     },
+  });
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [selectedTimebox, setSelectedTimebox] = useState({
+    index: 0,
+    hour: 0,
+    minutes: "00",
+  });
+  const [tempValue, setTempValue] = useState<string>("");
+
+  const toggleModal = (action: string) => {
+    setTempValue("");
+    action === "open" ? setModalVisible(true) : setModalVisible(false);
+  };
+
+  const handleSubmit = () => {
+    setTimeboxes((prev: { [key: number]: Timebox }) => {
+      const newTimeboxes = { ...prev };
+      newTimeboxes[selectedTimebox.index] = {
+        hour: selectedTimebox.hour,
+        firstHalf: selectedTimebox.minutes === "00" ? tempValue : "",
+        secondHalf: selectedTimebox.minutes === "30" ? tempValue : "",
+      };
+      return newTimeboxes;
+    });
+
+    toggleModal("close");
   };
 
   return (
-    <View style={[styles.timebox, styles.container]}>
-      <Text style={styles.h2}>Timebox</Text>
+    <View style={styles.container}>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => toggleModal("close")}
+      >
+        <View style={styles.modalView}>
+          <Text style={styles.modalHeader}>
+            Timebox {selectedTimebox.hour}:{selectedTimebox.minutes}
+          </Text>
+          <Pressable
+            style={styles.closeButton}
+            onPress={() => toggleModal("close")}
+          >
+            <Text>⛌</Text>
+          </Pressable>
+          <TextInput
+            style={styles.input}
+            onChangeText={setTempValue}
+            placeholder="Do something"
+          />
+          <View style={styles.saveButton}>
+            <Button title="Save" onPress={handleSubmit} />
+          </View>
+        </View>
+      </Modal>
 
+      <Text style={styles.h2}>Timebox</Text>
       <View>
-        {Object.values(timebox).map((hour, index) => (
+        {Object.values(timeboxes).map((hour, index) => (
           <View style={styles.timeboxRow} key={index}>
             <View style={styles.timeboxIndex}>
               <Text style={{ textAlign: "center" }}>{hour.hour}</Text>
             </View>
-            <View style={styles.timeboxValue}>
+            <Pressable
+              style={styles.timeboxValue}
+              onPress={() => {
+                toggleModal("open");
+                setSelectedTimebox({
+                  index: index,
+                  hour: hour.hour,
+                  minutes: "00",
+                });
+              }}
+            >
               <Text>{hour.firstHalf}</Text>
-            </View>
-            <View style={styles.timeboxValue}>
+            </Pressable>
+            <Pressable
+              style={styles.timeboxValue}
+              onPress={() => {
+                toggleModal("open");
+                setSelectedTimebox({
+                  index: index,
+                  hour: hour.hour,
+                  minutes: "30",
+                });
+              }}
+            >
               <Text>{hour.secondHalf}</Text>
-            </View>
+            </Pressable>
           </View>
         ))}
       </View>
@@ -137,7 +224,6 @@ const styles = StyleSheet.create({
   h2: {
     fontSize: 16 * 2,
   },
-  timebox: {},
   tableRow: {
     paddingHorizontal: 8,
     paddingVertical: 16,
@@ -164,5 +250,48 @@ const styles = StyleSheet.create({
     borderColor: "black",
     marginBottom: -1,
     marginLeft: -1,
+  },
+  modalView: {
+    margin: 16,
+    marginTop: 16 * 4,
+    height: 16 * 13,
+    backgroundColor: "white",
+    borderRadius: 16,
+    paddingVertical: 16,
+    paddingHorizontal: 16,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  closeButton: {
+    position: "absolute",
+    top: 16,
+    right: 16,
+    padding: 8,
+  },
+  modalHeader: {
+    fontSize: 16 * 1.5,
+    fontWeight: "bold",
+    marginTop: 16 * 0.75,
+  },
+  input: {
+    marginTop: 16 * 1.25,
+    height: 16 * 4,
+    width: "100%",
+    textAlign: "center",
+    fontSize: 16 * 1.25,
+    borderColor: "gray",
+    borderWidth: 1,
+    borderRadius: 8,
+    padding: 16,
+  },
+  saveButton: {
+    marginTop: 16,
   },
 });
