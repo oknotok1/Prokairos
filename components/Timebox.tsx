@@ -171,6 +171,10 @@ export default function Timebox() {
 
       <Text style={styles.h2}>Timebox</Text>
       <View>
+        <View style={styles.columnHeader}>
+          <Text>:00</Text>
+          <Text>:30</Text>
+        </View>
         {Object.values(timeboxes).map((hour, index) => (
           <View style={styles.timeboxRow} key={index}>
             <View style={styles.timeboxIndex}>
@@ -223,6 +227,14 @@ const styles = StyleSheet.create({
   },
   h2: {
     fontSize: 16 * 2,
+  },
+  columnHeader: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-around",
+    padding: 8,
+    width: "89.5%",
+    marginLeft: "auto",
   },
   tableRow: {
     paddingHorizontal: 8,
