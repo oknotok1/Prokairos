@@ -1,13 +1,17 @@
 import { StatusBar } from "expo-status-bar";
-import { SafeAreaView, StyleSheet, Text, View } from "react-native";
+import { SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
+import Timebox from "./components/Timebox";
+import Priorities from "./components/Priotities";
 
 export default function App() {
   return (
-    <SafeAreaView style={styles.body}>
+    <SafeAreaView style={styles.safeAreaView}>
       <StatusBar style="auto" />
-      <Header />
-      <Priorities />
-      <Timebox />
+      <ScrollView style={styles.scrollView}>
+        <Header />
+        <Priorities />
+        <Timebox />
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -24,40 +28,30 @@ const Header = () => {
   );
 };
 
-const Priorities = () => {
-  return (
-    <View style={[styles.priorities, styles.container]}>
-      <Text style={styles.h2}>Top Priorities</Text>
-    </View>
-  );
-};
-
-const Timebox = () => {
-  return (
-    <View style={[styles.timebox, styles.container]}>
-      <Text style={styles.h2}>Timebox</Text>
-    </View>
-  );
-};
-
 const styles = StyleSheet.create({
-  body: {
+  safeAreaView: {
     flex: 1,
-    gap: 16,
-    backgroundColor: "#fff",
-    // backgroundColor: "blue",
     alignItems: "center",
     justifyContent: "flex-start",
-    marginHorizontal: 8,
+    backgroundColor: "#F5F5F5",
+  },
+  scrollView: {
+    width: "100%",
+    backgroundColor: "#F5F5F5",
+    // display: "flex",
+    // flexDirection: "column",
+    // gap: 16,
   },
   container: {
     width: "100%",
     display: "flex",
     flexDirection: "column",
     gap: 16,
-    backgroundColor: "lightgrey",
-    paddingHorizontal: 8,
-    paddingVertical: 16,
+    backgroundColor: "#fff",
+    borderRadius: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 24,
+    marginBottom: 16,
   },
   header: {
     marginTop: 16 * 2,
@@ -72,5 +66,31 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   priorities: {},
-  timebox: {},
+  tableRow: {
+    paddingHorizontal: 8,
+    paddingVertical: 16,
+    borderWidth: 1,
+    borderColor: "black",
+    marginBottom: -1,
+  },
+  timeboxRow: {
+    display: "flex",
+    flexDirection: "row",
+  },
+  timeboxIndex: {
+    width: 16 * 2.5,
+    padding: 8,
+    borderWidth: 1,
+    borderColor: "black",
+    marginBottom: -1,
+    marginLeft: -1,
+  },
+  timeboxValue: {
+    width: "44.75%",
+    padding: 8,
+    borderWidth: 1,
+    borderColor: "black",
+    marginBottom: -1,
+    marginLeft: -1,
+  },
 });
