@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import {
   Button,
   Modal,
@@ -7,9 +7,10 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  TouchableOpacity,
   View,
 } from "react-native";
-
+import { LinearGradient } from "expo-linear-gradient";
 interface TopPriorities extends Array<string | undefined> {
   [index: number]: string | undefined;
 }
@@ -73,21 +74,35 @@ export default function Priorities() {
         scrollIndicatorInsets={{ left: 16, right: 16 }}
         style={styles.priorityRow}
       >
-        {topPriorities.map((priority, index) => (
-          <Pressable
-            style={[
-              styles.priorityBox,
-              index === topPriorities.length - 1 && { marginRight: 32 },
-            ]}
-            key={index}
-            onPress={() => {
-              toggleModal("open");
-              setSelectedPriority(index);
-            }}
-          >
-            <Text style={styles.p}>{priority}</Text>
-          </Pressable>
-        ))}
+        {topPriorities.map((priority, index) => {
+          const start = { x: 0.1, y: 0.2 };
+          const end = { x: 0.9, y: 0.8 };
+          const locations = [0.2, 0.8];
+
+          return (
+            <TouchableOpacity
+              style={[
+                styles.priorityBox,
+                index === topPriorities.length - 1 && { marginRight: 32 },
+              ]}
+              key={index}
+              onPress={() => {
+                toggleModal("open");
+                setSelectedPriority(index);
+              }}
+            >
+              <LinearGradient
+                colors={["#7A44F5", "#0036CF"]}
+                start={start}
+                end={end}
+                locations={locations}
+                style={styles.priorityBoxGradient}
+              >
+                <Text style={styles.priorityText}>{priority}</Text>
+              </LinearGradient>
+            </TouchableOpacity>
+          );
+        })}
       </ScrollView>
     </View>
   );
@@ -174,12 +189,20 @@ const styles = StyleSheet.create({
   priorityBox: {
     width: 16 * 12,
     height: 16 * 12,
-    padding: 16,
     marginRight: 16,
-    borderWidth: 1,
-    borderRadius: 16,
-    borderColor: "black",
-    backgroundColor:
-      "linear-gradient(136.67deg, rgba(122, 68, 245, 0.95) -0.31%, rgba(0, 54, 207, 0.95) 102.78%)",
+    borderRadius: 8,
+  },
+  priorityBoxGradient: {
+    flex: 1,
+    justifyContent: "flex-end",
+    padding: 16,
+    borderRadius: 8,
+    overflow: "hidden",
+    opacity: 0.95,
+  },
+  priorityText: {
+    color: "#fff",
+    fontWeight: "300",
+    fontSize: 16 * 1.125,
   },
 });
