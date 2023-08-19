@@ -3,6 +3,7 @@ import {
   Button,
   Modal,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -66,11 +67,18 @@ export default function Priorities() {
           </View>
         </View>
       </Modal>
-      <Text style={styles.h3}>Top Priorities</Text>
-      <View>
+      <Text style={styles.h3}>Priorities</Text>
+      <ScrollView
+        horizontal
+        scrollIndicatorInsets={{ left: 16, right: 16 }}
+        style={styles.priorityRow}
+      >
         {topPriorities.map((priority, index) => (
           <Pressable
-            style={styles.tableRow}
+            style={[
+              styles.priorityBox,
+              index === topPriorities.length - 1 && { marginRight: 32 },
+            ]}
             key={index}
             onPress={() => {
               toggleModal("open");
@@ -80,7 +88,7 @@ export default function Priorities() {
             <Text style={styles.p}>{priority}</Text>
           </Pressable>
         ))}
-      </View>
+      </ScrollView>
     </View>
   );
 }
@@ -93,7 +101,6 @@ const styles = StyleSheet.create({
     gap: 16,
     backgroundColor: "#fff",
     borderRadius: 8,
-    paddingHorizontal: 16,
     paddingVertical: 24,
     marginBottom: 16,
   },
@@ -102,6 +109,7 @@ const styles = StyleSheet.create({
     fontSize: 16 * 3,
   },
   h3: {
+    paddingHorizontal: 16,
     fontFamily: "Inter_700Bold",
     fontSize: 16 * 1.5,
   },
@@ -158,5 +166,20 @@ const styles = StyleSheet.create({
   },
   saveButton: {
     marginTop: 16,
+  },
+  priorityRow: {
+    paddingBottom: 16 * 1.25,
+    paddingLeft: 16,
+  },
+  priorityBox: {
+    width: 16 * 12,
+    height: 16 * 12,
+    padding: 16,
+    marginRight: 16,
+    borderWidth: 1,
+    borderRadius: 16,
+    borderColor: "black",
+    backgroundColor:
+      "linear-gradient(136.67deg, rgba(122, 68, 245, 0.95) -0.31%, rgba(0, 54, 207, 0.95) 102.78%)",
   },
 });
