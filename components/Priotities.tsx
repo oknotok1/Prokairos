@@ -11,64 +11,59 @@ import {
   View,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-interface TopPriorities extends Array<string | undefined> {
-  [index: number]: string | undefined;
+// import DateTimePicker from "@react-native-community/datetimepicker";
+
+import DateTimePicker, {
+  DateTimePickerEvent,
+} from "@react-native-community/datetimepicker";
+
+interface PriorityItem {
+  key: number;
+  task: string;
+  time: Date;
 }
 
 export default function Priorities() {
-  const [topPriorities, setTopPriorities] = useState<TopPriorities>([
-    undefined,
-    undefined,
-    undefined,
+  const [topPriorities, setTopPriorities] = useState<PriorityItem[]>([
+    {
+      key: Math.floor(Math.random() * 100000),
+      task: "Do something",
+      time: new Date(),
+    },
   ]);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
-  const [selectedPriority, setSelectedPriority] = useState<number>(0);
-  const [tempPriority, setTempPriority] = useState<string>("");
+  const [selectedPriority, setSelectedPriority] = useState<
+    PriorityItem | undefined
+  >();
 
   const toggleModal = (action: string) => {
-    setTempPriority("");
     action === "open" ? setModalVisible(true) : setModalVisible(false);
   };
 
   const handleSubmit = () => {
-    setTopPriorities((prev: TopPriorities) => {
-      const newPriorities = [...prev];
-      newPriorities[selectedPriority] = tempPriority;
-      return newPriorities;
-    });
+    if (!selectedPriority) return;
 
+    const updatedPriorities = topPriorities.map((priority) =>
+      priority.key === selectedPriority.key ? selectedPriority : priority
+    );
+
+    setTopPriorities(updatedPriorities);
+    setSelectedPriority(undefined);
     toggleModal("close");
   };
 
+  console.log(selectedPriority);
+
   return (
     <View style={styles.container}>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => toggleModal("close")}
-      >
-        <View style={styles.modalView}>
-          <Text style={styles.modalHeader}>
-            Priority #{selectedPriority + 1}
-          </Text>
-          <Pressable
-            style={styles.closeButton}
-            onPress={() => toggleModal("close")}
-          >
-            <Text>⛌</Text>
-          </Pressable>
-          <TextInput
-            style={styles.input}
-            onChangeText={setTempPriority}
-            placeholder="Do something"
-          />
-          <View style={styles.saveButton}>
-            <Button title="Save" onPress={handleSubmit} />
-          </View>
-        </View>
-      </Modal>
-      <Text style={styles.h3}>Priorities</Text>
+      <InputModal
+        modalVisible={modalVisible}
+        toggleModal={toggleModal}
+        selectedPriority={selectedPriority}
+        setSelectedPriority={setSelectedPriority}
+        handleSubmit={handleSubmit}
+      />
+      <Text style={styles.h3}>Priority</Text>
       <ScrollView
         horizontal
         scrollIndicatorInsets={{ left: 16, right: 16 }}
@@ -88,7 +83,7 @@ export default function Priorities() {
               key={index}
               onPress={() => {
                 toggleModal("open");
-                setSelectedPriority(index);
+                setSelectedPriority(priority);
               }}
             >
               <LinearGradient
@@ -98,7 +93,19 @@ export default function Priorities() {
                 locations={locations}
                 style={styles.priorityBoxGradient}
               >
-                <Text style={styles.priorityText}>{priority}</Text>
+                <Text style={styles.priorityText}>{priority?.task}</Text>
+                {priority?.time && (
+                  <View style={styles.priorityBadge}>
+                    <Text style={styles.priorityBadgeText_hour}>
+                      {priority.time.getHours() % 12 === 0
+                        ? 12
+                        : priority.time.getHours() % 12}
+                    </Text>
+                    <Text style={styles.priorityBadgeText_minute}>
+                      {priority.time.getMinutes() === 0 ? "00" : "30"}
+                    </Text>
+                  </View>
+                )}
               </LinearGradient>
             </TouchableOpacity>
           );
@@ -107,6 +114,84 @@ export default function Priorities() {
     </View>
   );
 }
+
+interface InputModalProps {
+  modalVisible: boolean;
+  toggleModal: (action: string) => void;
+  selectedPriority: PriorityItem | undefined;
+  setSelectedPriority: React.Dispatch<
+    React.SetStateAction<PriorityItem | undefined>
+  >;
+  handleSubmit: () => void;
+}
+
+const InputModal: React.FC<InputModalProps> = ({
+  modalVisible,
+  toggleModal,
+  selectedPriority,
+  setSelectedPriority,
+  handleSubmit,
+}) => {
+  const handleTimeChange = (
+    event: DateTimePickerEvent,
+    selectedDate?: Date
+  ) => {
+    if (selectedPriority && event.type === "set") {
+      const selectedTime = selectedDate || new Date();
+      const updatedPriority = {
+        ...selectedPriority,
+        time: selectedTime,
+      };
+      setSelectedPriority(updatedPriority);
+    }
+  };
+
+  return (
+    <Modal
+      animationType="slide"
+      transparent={true}
+      visible={modalVisible}
+      onRequestClose={() => toggleModal("close")}
+    >
+      <View style={styles.modalView}>
+        <Text style={styles.modalHeader}>Priority #{1}</Text>
+        <Pressable
+          style={styles.closeButton}
+          onPress={() => toggleModal("close")}
+        >
+          <Text>⛌</Text>
+        </Pressable>
+        <TextInput
+          style={styles.input}
+          onChangeText={
+            selectedPriority
+              ? (text) =>
+                  setSelectedPriority({
+                    ...selectedPriority,
+                    task: text,
+                  })
+              : () => {}
+          }
+          placeholder="Do something"
+        />
+        <DateTimePicker
+          value={selectedPriority?.time || new Date()}
+          mode="time"
+          minuteInterval={30}
+          is24Hour={false}
+          display="default"
+          onChange={handleTimeChange} // Use the handleTimeChange function here
+          textColor="#000"
+          accentColor="#000"
+        />
+
+        <View style={styles.saveButton}>
+          <Button title="Save" onPress={handleSubmit} />
+        </View>
+      </View>
+    </Modal>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -140,9 +225,12 @@ const styles = StyleSheet.create({
     marginBottom: -1,
   },
   modalView: {
-    margin: 16,
     marginTop: 16 * 4,
-    height: 16 * 13,
+    margin: 16,
+    paddingTop: 16 * 1.5,
+    display: "flex",
+    flexDirection: "column",
+    gap: 16 * 1.5,
     backgroundColor: "white",
     borderRadius: 16,
     paddingVertical: 16,
@@ -159,17 +247,15 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     position: "absolute",
-    top: 16,
-    right: 16,
+    top: 8,
+    right: 8,
     padding: 8,
   },
   modalHeader: {
     fontSize: 16 * 1.5,
     fontWeight: "bold",
-    marginTop: 16 * 0.75,
   },
   input: {
-    marginTop: 16 * 1.25,
     height: 16 * 4,
     width: "100%",
     textAlign: "center",
@@ -180,7 +266,7 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   saveButton: {
-    marginTop: 16,
+    // marginTop: 8,
   },
   priorityRow: {
     paddingBottom: 16 * 1.25,
@@ -196,6 +282,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-end",
     padding: 16,
+    gap: 8,
     borderRadius: 8,
     overflow: "hidden",
     opacity: 0.95,
@@ -204,5 +291,26 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "300",
     fontSize: 16 * 1.125,
+  },
+  priorityBadge: {
+    flexDirection: "row",
+    paddingVertical: 4,
+    paddingHorizontal: 4 * 3,
+    borderRadius: 16,
+    backgroundColor: "#fff",
+    display: "flex",
+    alignItems: "baseline",
+    justifyContent: "center",
+    alignSelf: "flex-start",
+    opacity: 0.65,
+  },
+  priorityBadgeText_hour: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#7A44F5",
+  },
+  priorityBadgeText_minute: {
+    fontSize: 16 * 0.75,
+    color: "#7A44F5",
   },
 });
