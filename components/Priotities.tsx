@@ -66,7 +66,7 @@ export default function Priorities() {
           </View>
         </View>
       </Modal>
-      <Text style={styles.h2}>Top Priorities</Text>
+      <Text style={styles.h3}>Top Priorities</Text>
       <View>
         {topPriorities.map((priority, index) => (
           <Pressable
@@ -77,7 +77,7 @@ export default function Priorities() {
               setSelectedPriority(index);
             }}
           >
-            <Text>{priority}</Text>
+            <Text style={styles.p}>{priority}</Text>
           </Pressable>
         ))}
       </View>
@@ -97,8 +97,17 @@ const styles = StyleSheet.create({
     paddingVertical: 24,
     marginBottom: 16,
   },
-  h2: {
-    fontSize: 16 * 2,
+  h1: {
+    fontFamily: "Inter_700Bold",
+    fontSize: 16 * 3,
+  },
+  h3: {
+    fontFamily: "Inter_700Bold",
+    fontSize: 16 * 1.5,
+  },
+  p: {
+    fontFamily: "Inter_400Regular",
+    fontSize: 16,
   },
   tableRow: {
     paddingHorizontal: 8,
