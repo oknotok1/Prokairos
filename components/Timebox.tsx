@@ -54,14 +54,8 @@ export default function Timebox() {
         selectedTimebox={selectedTimebox}
         setSelectedTimebox={setSelectedTimebox}
       />
-      <Text style={styles.h3}>Timebox</Text>
-      <View
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "space-between",
-        }}
-      >
+      <Text style={styles.h3}>Today</Text>
+      <View style={styles.timebox_columnHeader}>
         <Text>:00</Text>
         <Text>:30</Text>
       </View>
@@ -70,16 +64,12 @@ export default function Timebox() {
           <TouchableOpacity
             style={styles.timebox}
             onPress={() => {
-              // setModalVisible(true);
               toggleModal(timebox);
             }}
+            key={index}
           >
             <TimeBadge time={timebox.time} />
             {timebox.task && <Text>{timebox.task}</Text>}
-            {/* <Text>
-              {timebox.time.getHours()}
-              {("0" + timebox.time.getMinutes()).slice(-2)}
-            </Text> */}
           </TouchableOpacity>
         ))}
       </View>
@@ -110,6 +100,11 @@ const styles = StyleSheet.create({
   p: {
     fontFamily: "Inter_400Regular",
     fontSize: 16,
+  },
+  timebox_columnHeader: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-around",
   },
   timebox_row: {
     display: "flex",
