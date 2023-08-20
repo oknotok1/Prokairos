@@ -9,9 +9,10 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 
 import InputModal from "./InputModal";
+import TimeBadge from "./TimeBadge";
 
-export interface PriorityItem {
-  id: number;
+export interface Priority {
+  id?: number;
   task: string;
   time: Date;
   addNew?: boolean;
@@ -19,7 +20,7 @@ export interface PriorityItem {
 
 export default function Priorities() {
   const [modalVisible, setModalVisible] = useState<boolean>(false);
-  const [topPriorities, setTopPriorities] = useState<PriorityItem[]>([
+  const [topPriorities, setTopPriorities] = useState<Priority[]>([
     {
       id: 0,
       task: "Add a priority",
@@ -28,10 +29,10 @@ export default function Priorities() {
     },
   ]);
   const [selectedPriority, setSelectedPriority] = useState<
-    PriorityItem | undefined
+    Priority | undefined
   >();
 
-  const toggleModal = (priority: PriorityItem | undefined = undefined) => {
+  const toggleModal = (priority: Priority | undefined = undefined) => {
     if (!priority) {
       setSelectedPriority(undefined);
       setModalVisible(false);
@@ -112,28 +113,7 @@ export default function Priorities() {
                 ) : (
                   <>
                     <Text style={styles.priorityText}>{priority?.task}</Text>
-                    {priority?.time && (
-                      <View
-                        style={[
-                          styles.priorityBadge,
-                          {
-                            backgroundColor:
-                              priority.time.getHours() < 12
-                                ? "#046D8E"
-                                : "#FF4646",
-                          },
-                        ]}
-                      >
-                        <Text style={styles.priorityBadgeText_hour}>
-                          {priority.time.getHours() % 12 === 0
-                            ? 12
-                            : priority.time.getHours() % 12}
-                        </Text>
-                        <Text style={styles.priorityBadgeText_minute}>
-                          {priority.time.getMinutes() === 0 ? "00" : "30"}
-                        </Text>
-                      </View>
-                    )}
+                    {priority?.time && <TimeBadge time={priority.time} />}
                   </>
                 )}
               </LinearGradient>
