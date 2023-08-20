@@ -9,209 +9,217 @@ import {
   View,
 } from "react-native";
 
-interface Timebox {
-  hour: number;
-  firstHalf: string;
-  secondHalf: string;
-}
-
 export default function Timebox() {
-  const [timeboxes, setTimeboxes] = useState<{ [key: number]: Timebox }>({
-    1: {
-      hour: 5,
-      firstHalf: "",
-      secondHalf: "",
-    },
-    2: {
-      hour: 6,
-      firstHalf: "",
-      secondHalf: "",
-    },
-    3: {
-      hour: 7,
-      firstHalf: "",
-      secondHalf: "",
-    },
-    4: {
-      hour: 8,
-      firstHalf: "",
-      secondHalf: "",
-    },
-    5: {
-      hour: 9,
-      firstHalf: "",
-      secondHalf: "",
-    },
-    6: {
-      hour: 10,
-      firstHalf: "",
-      secondHalf: "",
-    },
-    7: {
-      hour: 11,
-      firstHalf: "",
-      secondHalf: "",
-    },
-    8: {
-      hour: 12,
-      firstHalf: "",
-      secondHalf: "",
-    },
-    9: {
-      hour: 1,
-      firstHalf: "",
-      secondHalf: "",
-    },
-    10: {
-      hour: 2,
-      firstHalf: "",
-      secondHalf: "",
-    },
-    11: {
-      hour: 3,
-      firstHalf: "",
-      secondHalf: "",
-    },
-    12: {
-      hour: 4,
-      firstHalf: "",
-      secondHalf: "",
-    },
-    13: {
-      hour: 5,
-      firstHalf: "",
-      secondHalf: "",
-    },
-    14: {
-      hour: 6,
-      firstHalf: "",
-      secondHalf: "",
-    },
-    15: {
-      hour: 7,
-      firstHalf: "",
-      secondHalf: "",
-    },
-    16: {
-      hour: 8,
-      firstHalf: "",
-      secondHalf: "",
-    },
-    17: {
-      hour: 9,
-      firstHalf: "",
-      secondHalf: "",
-    },
-    18: {
-      hour: 10,
-      firstHalf: "",
-      secondHalf: "",
-    },
-    19: {
-      hour: 11,
-      firstHalf: "",
-      secondHalf: "",
-    },
-  });
-  const [modalVisible, setModalVisible] = useState<boolean>(false);
-  const [selectedTimebox, setSelectedTimebox] = useState({
-    index: 0,
-    hour: 0,
-    minutes: "00",
-  });
-  const [tempValue, setTempValue] = useState<string>("");
-
-  const toggleModal = (action: string) => {
-    setTempValue("");
-    action === "open" ? setModalVisible(true) : setModalVisible(false);
-  };
-
-  const handleSubmit = () => {
-    setTimeboxes((prev: { [key: number]: Timebox }) => {
-      const newTimeboxes = { ...prev };
-      newTimeboxes[selectedTimebox.index] = {
-        hour: selectedTimebox.hour,
-        firstHalf: selectedTimebox.minutes === "00" ? tempValue : "",
-        secondHalf: selectedTimebox.minutes === "30" ? tempValue : "",
-      };
-      return newTimeboxes;
-    });
-
-    toggleModal("close");
-  };
-
   return (
     <View style={styles.container}>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => toggleModal("close")}
-      >
-        <View style={styles.modalView}>
-          <Text style={styles.modalHeader}>
-            Timebox {selectedTimebox.hour}:{selectedTimebox.minutes}
-          </Text>
-          <Pressable
-            style={styles.closeButton}
-            onPress={() => toggleModal("close")}
-          >
-            <Text>⛌</Text>
-          </Pressable>
-          <TextInput
-            style={styles.input}
-            onChangeText={setTempValue}
-            placeholder="Do something"
-          />
-          <View style={styles.saveButton}>
-            <Button title="Save" onPress={handleSubmit} />
-          </View>
-        </View>
-      </Modal>
-
       <Text style={styles.h3}>Timebox</Text>
-      <View>
-        <View style={styles.columnHeader}>
-          <Text>:00</Text>
-          <Text>:30</Text>
-        </View>
-        {Object.values(timeboxes).map((hour, index) => (
-          <View style={styles.timeboxRow} key={index}>
-            <View style={styles.timeboxIndex}>
-              <Text style={{ textAlign: "center" }}>{hour.hour}</Text>
-            </View>
-            <Pressable
-              style={styles.timeboxValue}
-              onPress={() => {
-                toggleModal("open");
-                setSelectedTimebox({
-                  index: index,
-                  hour: hour.hour,
-                  minutes: "00",
-                });
-              }}
-            >
-              <Text>{hour.firstHalf}</Text>
-            </Pressable>
-            <Pressable
-              style={styles.timeboxValue}
-              onPress={() => {
-                toggleModal("open");
-                setSelectedTimebox({
-                  index: index,
-                  hour: hour.hour,
-                  minutes: "30",
-                });
-              }}
-            >
-              <Text>{hour.secondHalf}</Text>
-            </Pressable>
-          </View>
-        ))}
-      </View>
     </View>
   );
 }
+
+// interface Timebox {
+//   hour: number;
+//   firstHalf: string;
+//   secondHalf: string;
+// }
+
+// export default function Timebox() {
+//   const [timeboxes, setTimeboxes] = useState<{ [key: number]: Timebox }>({
+//     1: {
+//       hour: 5,
+//       firstHalf: "",
+//       secondHalf: "",
+//     },
+//     2: {
+//       hour: 6,
+//       firstHalf: "",
+//       secondHalf: "",
+//     },
+//     3: {
+//       hour: 7,
+//       firstHalf: "",
+//       secondHalf: "",
+//     },
+//     4: {
+//       hour: 8,
+//       firstHalf: "",
+//       secondHalf: "",
+//     },
+//     5: {
+//       hour: 9,
+//       firstHalf: "",
+//       secondHalf: "",
+//     },
+//     6: {
+//       hour: 10,
+//       firstHalf: "",
+//       secondHalf: "",
+//     },
+//     7: {
+//       hour: 11,
+//       firstHalf: "",
+//       secondHalf: "",
+//     },
+//     8: {
+//       hour: 12,
+//       firstHalf: "",
+//       secondHalf: "",
+//     },
+//     9: {
+//       hour: 1,
+//       firstHalf: "",
+//       secondHalf: "",
+//     },
+//     10: {
+//       hour: 2,
+//       firstHalf: "",
+//       secondHalf: "",
+//     },
+//     11: {
+//       hour: 3,
+//       firstHalf: "",
+//       secondHalf: "",
+//     },
+//     12: {
+//       hour: 4,
+//       firstHalf: "",
+//       secondHalf: "",
+//     },
+//     13: {
+//       hour: 5,
+//       firstHalf: "",
+//       secondHalf: "",
+//     },
+//     14: {
+//       hour: 6,
+//       firstHalf: "",
+//       secondHalf: "",
+//     },
+//     15: {
+//       hour: 7,
+//       firstHalf: "",
+//       secondHalf: "",
+//     },
+//     16: {
+//       hour: 8,
+//       firstHalf: "",
+//       secondHalf: "",
+//     },
+//     17: {
+//       hour: 9,
+//       firstHalf: "",
+//       secondHalf: "",
+//     },
+//     18: {
+//       hour: 10,
+//       firstHalf: "",
+//       secondHalf: "",
+//     },
+//     19: {
+//       hour: 11,
+//       firstHalf: "",
+//       secondHalf: "",
+//     },
+//   });
+//   const [modalVisible, setModalVisible] = useState<boolean>(false);
+//   const [selectedTimebox, setSelectedTimebox] = useState({
+//     index: 0,
+//     hour: 0,
+//     minutes: "00",
+//   });
+//   const [tempValue, setTempValue] = useState<string>("");
+
+//   const toggleModal = (action: string) => {
+//     setTempValue("");
+//     action === "open" ? setModalVisible(true) : setModalVisible(false);
+//   };
+
+//   const handleSubmit = () => {
+//     setTimeboxes((prev: { [key: number]: Timebox }) => {
+//       const newTimeboxes = { ...prev };
+//       newTimeboxes[selectedTimebox.index] = {
+//         hour: selectedTimebox.hour,
+//         firstHalf: selectedTimebox.minutes === "00" ? tempValue : "",
+//         secondHalf: selectedTimebox.minutes === "30" ? tempValue : "",
+//       };
+//       return newTimeboxes;
+//     });
+
+//     toggleModal("close");
+//   };
+
+//   return (
+//     <View style={styles.container}>
+//       <Modal
+//         animationType="slide"
+//         transparent={true}
+//         visible={modalVisible}
+//         onRequestClose={() => toggleModal("close")}
+//       >
+//         <View style={styles.modalView}>
+//           <Text style={styles.modalHeader}>
+//             Timebox {selectedTimebox.hour}:{selectedTimebox.minutes}
+//           </Text>
+//           <Pressable
+//             style={styles.closeButton}
+//             onPress={() => toggleModal("close")}
+//           >
+//             <Text>⛌</Text>
+//           </Pressable>
+//           <TextInput
+//             style={styles.input}
+//             onChangeText={setTempValue}
+//             placeholder="Do something"
+//           />
+//           <View style={styles.saveButton}>
+//             <Button title="Save" onPress={handleSubmit} />
+//           </View>
+//         </View>
+//       </Modal>
+
+//       <Text style={styles.h3}>Timebox</Text>
+//       <View>
+//         <View style={styles.columnHeader}>
+//           <Text>:00</Text>
+//           <Text>:30</Text>
+//         </View>
+//         {Object.values(timeboxes).map((hour, index) => (
+//           <View style={styles.timeboxRow} key={index}>
+//             <View style={styles.timeboxIndex}>
+//               <Text style={{ textAlign: "center" }}>{hour.hour}</Text>
+//             </View>
+//             <Pressable
+//               style={styles.timeboxValue}
+//               onPress={() => {
+//                 toggleModal("open");
+//                 setSelectedTimebox({
+//                   index: index,
+//                   hour: hour.hour,
+//                   minutes: "00",
+//                 });
+//               }}
+//             >
+//               <Text>{hour.firstHalf}</Text>
+//             </Pressable>
+//             <Pressable
+//               style={styles.timeboxValue}
+//               onPress={() => {
+//                 toggleModal("open");
+//                 setSelectedTimebox({
+//                   index: index,
+//                   hour: hour.hour,
+//                   minutes: "30",
+//                 });
+//               }}
+//             >
+//               <Text>{hour.secondHalf}</Text>
+//             </Pressable>
+//           </View>
+//         ))}
+//       </View>
+//     </View>
+//   );
+// }
 
 const styles = StyleSheet.create({
   container: {

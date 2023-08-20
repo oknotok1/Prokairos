@@ -1,23 +1,16 @@
 import React, { useState } from "react";
 import {
-  Button,
-  Modal,
-  Pressable,
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-// import DateTimePicker from "@react-native-community/datetimepicker";
 
-import DateTimePicker, {
-  DateTimePickerEvent,
-} from "@react-native-community/datetimepicker";
+import InputModal from "./InputModal";
 
-interface PriorityItem {
+export interface PriorityItem {
   id: number;
   task: string;
   time: Date;
@@ -58,50 +51,15 @@ export default function Priorities() {
     setModalVisible(true);
   };
 
-  const handleSubmit = () => {
-    if (!selectedPriority) return;
-
-    // make a copy of the topPriorities array to update
-    const updatedPriorities = [...topPriorities];
-
-    // if the priority is new, add it to the end of the list, otherwise update the existing priority in the list
-    const index = updatedPriorities.findIndex(
-      (priority) => priority.id === selectedPriority.id
-    );
-    updatedPriorities[index === -1 ? topPriorities.length : index] =
-      selectedPriority;
-
-    // sort updatedPriorities by time, earliest to latest
-    updatedPriorities.sort((a, b) => {
-      if (!a.time || !b.time) return 0;
-      if (a.time < b.time) return -1;
-      if (a.time > b.time) return 1;
-      return 0;
-    });
-
-    // move the priority with .addNew to the end of the list
-    const addNewIndex = updatedPriorities.findIndex(
-      (priority) => priority.addNew
-    );
-    if (addNewIndex !== -1) {
-      const addNewPriority = updatedPriorities[addNewIndex];
-      updatedPriorities.splice(addNewIndex, 1);
-      updatedPriorities.push(addNewPriority);
-    }
-
-    setTopPriorities(updatedPriorities);
-    setSelectedPriority(undefined);
-    toggleModal();
-  };
-
   return (
     <View style={styles.container}>
       <InputModal
         modalVisible={modalVisible}
         toggleModal={toggleModal}
+        topPriorities={topPriorities}
+        setTopPriorities={setTopPriorities}
         selectedPriority={selectedPriority}
         setSelectedPriority={setSelectedPriority}
-        handleSubmit={handleSubmit}
       />
       <Text style={styles.h3}>Priority</Text>
       <ScrollView
@@ -119,11 +77,14 @@ export default function Priorities() {
               style={[
                 styles.priorityBox,
                 index === topPriorities.length - 1 && { marginRight: 32 },
+                topPriorities.length > 3 &&
+                  index === topPriorities.length - 1 && { opacity: 0.5 },
               ]}
               key={index}
               onPress={() => {
                 toggleModal(priority);
               }}
+              disabled={topPriorities.length > 3 && priority.addNew}
             >
               <LinearGradient
                 colors={["#7A44F5", "#0036CF"]}
@@ -140,7 +101,13 @@ export default function Priorities() {
                       justifyContent: "center",
                     }}
                   >
-                    <Text style={styles.priorityText}>{priority?.task}</Text>
+                    <Text
+                      style={[styles.priorityText, { textAlign: "center" }]}
+                    >
+                      {topPriorities.length > 3
+                        ? "You have enough priorities for today!"
+                        : priority?.task}
+                    </Text>
                   </View>
                 ) : (
                   <>
@@ -178,87 +145,6 @@ export default function Priorities() {
   );
 }
 
-interface InputModalProps {
-  modalVisible: boolean;
-  toggleModal: (priority: PriorityItem | undefined) => void;
-  selectedPriority: PriorityItem | undefined;
-  setSelectedPriority: React.Dispatch<
-    React.SetStateAction<PriorityItem | undefined>
-  >;
-  handleSubmit: () => void;
-}
-
-const InputModal: React.FC<InputModalProps> = ({
-  modalVisible,
-  toggleModal,
-  selectedPriority,
-  setSelectedPriority,
-  handleSubmit,
-}) => {
-  const handleTimeChange = (
-    event: DateTimePickerEvent,
-    selectedDate?: Date
-  ) => {
-    if (selectedPriority && event.type === "set") {
-      const selectedTime = selectedDate || new Date();
-      const updatedPriority = {
-        ...selectedPriority,
-        time: selectedTime,
-      };
-      setSelectedPriority(updatedPriority);
-    }
-  };
-
-  return (
-    <Modal
-      animationType="slide"
-      transparent={true}
-      visible={modalVisible}
-      onRequestClose={() => toggleModal}
-    >
-      <View style={styles.modalView}>
-        <Text style={styles.modalHeader}>Priority #{selectedPriority?.id}</Text>
-        <Pressable
-          style={styles.closeButton}
-          onPress={() => {
-            toggleModal(undefined);
-          }}
-        >
-          <Text>⛌</Text>
-        </Pressable>
-        <TextInput
-          style={styles.input}
-          value={selectedPriority?.task}
-          onChangeText={
-            selectedPriority
-              ? (text) =>
-                  setSelectedPriority({
-                    ...selectedPriority,
-                    task: text,
-                  })
-              : () => {}
-          }
-          placeholder="Do something"
-        />
-        <DateTimePicker
-          value={selectedPriority?.time || new Date()}
-          mode="time"
-          minuteInterval={30}
-          is24Hour={false}
-          display="default"
-          onChange={handleTimeChange} // Use the handleTimeChange function here
-          textColor="#000"
-          accentColor="#000"
-        />
-
-        <View style={styles.saveButton}>
-          <Button title="Save" onPress={handleSubmit} />
-        </View>
-      </View>
-    </Modal>
-  );
-};
-
 const styles = StyleSheet.create({
   container: {
     width: "100%",
@@ -282,57 +168,6 @@ const styles = StyleSheet.create({
   p: {
     fontFamily: "Inter_400Regular",
     fontSize: 16,
-  },
-  tableRow: {
-    paddingHorizontal: 8,
-    paddingVertical: 16,
-    borderWidth: 1,
-    borderColor: "black",
-    marginBottom: -1,
-  },
-  modalView: {
-    marginTop: 16 * 4,
-    margin: 16,
-    paddingTop: 16 * 1.5,
-    display: "flex",
-    flexDirection: "column",
-    gap: 16 * 1.5,
-    backgroundColor: "white",
-    borderRadius: 16,
-    paddingVertical: 16,
-    paddingHorizontal: 16,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  closeButton: {
-    position: "absolute",
-    top: 8,
-    right: 8,
-    padding: 8,
-  },
-  modalHeader: {
-    fontSize: 16 * 1.5,
-    fontWeight: "bold",
-  },
-  input: {
-    height: 16 * 4,
-    width: "100%",
-    textAlign: "center",
-    fontSize: 16 * 1.25,
-    borderColor: "gray",
-    borderWidth: 1,
-    borderRadius: 8,
-    padding: 16,
-  },
-  saveButton: {
-    // marginTop: 8,
   },
   priorityRow: {
     paddingBottom: 16 * 1.25,
