@@ -18,27 +18,22 @@ import DateTimePicker, {
 } from "@react-native-community/datetimepicker";
 
 interface PriorityItem {
-  key: number;
+  id: number;
   task: string;
   time: Date;
   addNew?: boolean;
 }
 
 export default function Priorities() {
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [topPriorities, setTopPriorities] = useState<PriorityItem[]>([
     {
-      key: 0,
+      id: 0,
       task: "Add a priority",
       time: new Date(),
       addNew: true,
     },
-    // {
-    //   key: Math.floor(Math.random() * 100000),
-    //   task: "Do something",
-    //   time: new Date(),
-    // },
   ]);
-  const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [selectedPriority, setSelectedPriority] = useState<
     PriorityItem | undefined
   >();
@@ -52,7 +47,7 @@ export default function Priorities() {
 
     if (priority.addNew) {
       setSelectedPriority({
-        key: topPriorities.length,
+        id: topPriorities.length,
         task: "",
         time: new Date(),
       });
@@ -64,19 +59,35 @@ export default function Priorities() {
   };
 
   const handleSubmit = () => {
-    // TODO: fix sorting logic
-    console.log("handleSubmit::selectedPriority", selectedPriority);
     if (!selectedPriority) return;
 
-    // add selectedPriority to the topPriorities array
+    // make a copy of the topPriorities array to update
     const updatedPriorities = [...topPriorities];
-    updatedPriorities.push(selectedPriority);
 
-    // move the "add new" priority to the end of the array
-    const addNewPriority = updatedPriorities.shift();
-    updatedPriorities
-      .sort((a, b) => a.key - b.key)
-      .push(addNewPriority as PriorityItem);
+    // if the priority is new, add it to the end of the list, otherwise update the existing priority in the list
+    const index = updatedPriorities.findIndex(
+      (priority) => priority.id === selectedPriority.id
+    );
+    updatedPriorities[index === -1 ? topPriorities.length : index] =
+      selectedPriority;
+
+    // sort updatedPriorities by time, earliest to latest
+    updatedPriorities.sort((a, b) => {
+      if (!a.time || !b.time) return 0;
+      if (a.time < b.time) return -1;
+      if (a.time > b.time) return 1;
+      return 0;
+    });
+
+    // move the priority with .addNew to the end of the list
+    const addNewIndex = updatedPriorities.findIndex(
+      (priority) => priority.addNew
+    );
+    if (addNewIndex !== -1) {
+      const addNewPriority = updatedPriorities[addNewIndex];
+      updatedPriorities.splice(addNewIndex, 1);
+      updatedPriorities.push(addNewPriority);
+    }
 
     setTopPriorities(updatedPriorities);
     setSelectedPriority(undefined);
@@ -121,7 +132,7 @@ export default function Priorities() {
                 locations={locations}
                 style={styles.priorityBoxGradient}
               >
-                {priority?.key === 0 ? (
+                {priority.addNew ? (
                   <View
                     style={{
                       flex: 1,
@@ -135,7 +146,17 @@ export default function Priorities() {
                   <>
                     <Text style={styles.priorityText}>{priority?.task}</Text>
                     {priority?.time && (
-                      <View style={styles.priorityBadge}>
+                      <View
+                        style={[
+                          styles.priorityBadge,
+                          {
+                            backgroundColor:
+                              priority.time.getHours() < 12
+                                ? "#046D8E"
+                                : "#FF4646",
+                          },
+                        ]}
+                      >
                         <Text style={styles.priorityBadgeText_hour}>
                           {priority.time.getHours() % 12 === 0
                             ? 12
@@ -196,9 +217,7 @@ const InputModal: React.FC<InputModalProps> = ({
       onRequestClose={() => toggleModal}
     >
       <View style={styles.modalView}>
-        <Text style={styles.modalHeader}>
-          Priority #{selectedPriority?.key}
-        </Text>
+        <Text style={styles.modalHeader}>Priority #{selectedPriority?.id}</Text>
         <Pressable
           style={styles.closeButton}
           onPress={() => {
@@ -209,7 +228,7 @@ const InputModal: React.FC<InputModalProps> = ({
         </Pressable>
         <TextInput
           style={styles.input}
-          value={selectedPriority?.key === 0 ? "" : selectedPriority?.task}
+          value={selectedPriority?.task}
           onChangeText={
             selectedPriority
               ? (text) =>
@@ -349,15 +368,15 @@ const styles = StyleSheet.create({
     alignItems: "baseline",
     justifyContent: "center",
     alignSelf: "flex-start",
-    opacity: 0.65,
+    opacity: 0.75,
   },
   priorityBadgeText_hour: {
     fontSize: 16,
     fontWeight: "bold",
-    color: "#7A44F5",
+    color: "#fff",
   },
   priorityBadgeText_minute: {
     fontSize: 16 * 0.75,
-    color: "#7A44F5",
+    color: "#fff",
   },
 });
