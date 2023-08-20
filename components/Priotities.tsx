@@ -21,38 +21,67 @@ interface PriorityItem {
   key: number;
   task: string;
   time: Date;
+  addNew?: boolean;
 }
 
 export default function Priorities() {
   const [topPriorities, setTopPriorities] = useState<PriorityItem[]>([
     {
-      key: Math.floor(Math.random() * 100000),
-      task: "Do something",
+      key: 0,
+      task: "Add a priority",
       time: new Date(),
+      addNew: true,
     },
+    // {
+    //   key: Math.floor(Math.random() * 100000),
+    //   task: "Do something",
+    //   time: new Date(),
+    // },
   ]);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [selectedPriority, setSelectedPriority] = useState<
     PriorityItem | undefined
   >();
 
-  const toggleModal = (action: string) => {
-    action === "open" ? setModalVisible(true) : setModalVisible(false);
+  const toggleModal = (priority: PriorityItem | undefined = undefined) => {
+    if (!priority) {
+      setSelectedPriority(undefined);
+      setModalVisible(false);
+      return;
+    }
+
+    if (priority.addNew) {
+      setSelectedPriority({
+        key: topPriorities.length,
+        task: "",
+        time: new Date(),
+      });
+    } else {
+      setSelectedPriority(priority);
+    }
+
+    setModalVisible(true);
   };
 
   const handleSubmit = () => {
+    // TODO: fix sorting logic
+    console.log("handleSubmit::selectedPriority", selectedPriority);
     if (!selectedPriority) return;
 
-    const updatedPriorities = topPriorities.map((priority) =>
-      priority.key === selectedPriority.key ? selectedPriority : priority
-    );
+    // add selectedPriority to the topPriorities array
+    const updatedPriorities = [...topPriorities];
+    updatedPriorities.push(selectedPriority);
+
+    // move the "add new" priority to the end of the array
+    const addNewPriority = updatedPriorities.shift();
+    updatedPriorities
+      .sort((a, b) => a.key - b.key)
+      .push(addNewPriority as PriorityItem);
 
     setTopPriorities(updatedPriorities);
     setSelectedPriority(undefined);
-    toggleModal("close");
+    toggleModal();
   };
-
-  console.log(selectedPriority);
 
   return (
     <View style={styles.container}>
@@ -82,8 +111,7 @@ export default function Priorities() {
               ]}
               key={index}
               onPress={() => {
-                toggleModal("open");
-                setSelectedPriority(priority);
+                toggleModal(priority);
               }}
             >
               <LinearGradient
@@ -93,18 +121,32 @@ export default function Priorities() {
                 locations={locations}
                 style={styles.priorityBoxGradient}
               >
-                <Text style={styles.priorityText}>{priority?.task}</Text>
-                {priority?.time && (
-                  <View style={styles.priorityBadge}>
-                    <Text style={styles.priorityBadgeText_hour}>
-                      {priority.time.getHours() % 12 === 0
-                        ? 12
-                        : priority.time.getHours() % 12}
-                    </Text>
-                    <Text style={styles.priorityBadgeText_minute}>
-                      {priority.time.getMinutes() === 0 ? "00" : "30"}
-                    </Text>
+                {priority?.key === 0 ? (
+                  <View
+                    style={{
+                      flex: 1,
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Text style={styles.priorityText}>{priority?.task}</Text>
                   </View>
+                ) : (
+                  <>
+                    <Text style={styles.priorityText}>{priority?.task}</Text>
+                    {priority?.time && (
+                      <View style={styles.priorityBadge}>
+                        <Text style={styles.priorityBadgeText_hour}>
+                          {priority.time.getHours() % 12 === 0
+                            ? 12
+                            : priority.time.getHours() % 12}
+                        </Text>
+                        <Text style={styles.priorityBadgeText_minute}>
+                          {priority.time.getMinutes() === 0 ? "00" : "30"}
+                        </Text>
+                      </View>
+                    )}
+                  </>
                 )}
               </LinearGradient>
             </TouchableOpacity>
@@ -117,7 +159,7 @@ export default function Priorities() {
 
 interface InputModalProps {
   modalVisible: boolean;
-  toggleModal: (action: string) => void;
+  toggleModal: (priority: PriorityItem | undefined) => void;
   selectedPriority: PriorityItem | undefined;
   setSelectedPriority: React.Dispatch<
     React.SetStateAction<PriorityItem | undefined>
@@ -151,18 +193,23 @@ const InputModal: React.FC<InputModalProps> = ({
       animationType="slide"
       transparent={true}
       visible={modalVisible}
-      onRequestClose={() => toggleModal("close")}
+      onRequestClose={() => toggleModal}
     >
       <View style={styles.modalView}>
-        <Text style={styles.modalHeader}>Priority #{1}</Text>
+        <Text style={styles.modalHeader}>
+          Priority #{selectedPriority?.key}
+        </Text>
         <Pressable
           style={styles.closeButton}
-          onPress={() => toggleModal("close")}
+          onPress={() => {
+            toggleModal(undefined);
+          }}
         >
           <Text>⛌</Text>
         </Pressable>
         <TextInput
           style={styles.input}
+          value={selectedPriority?.key === 0 ? "" : selectedPriority?.task}
           onChangeText={
             selectedPriority
               ? (text) =>
