@@ -57,7 +57,7 @@ export default function Timebox() {
   }, []);
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} testID="timebox-component">
       <InputModal
         modalVisible={modalVisible}
         toggleModal={toggleModal}
