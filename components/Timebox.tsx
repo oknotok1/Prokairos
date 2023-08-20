@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  Dimensions,
+} from "react-native";
 import TimeBadge from "./TimeBadge";
 import InputModal from "./InputModal";
 
@@ -12,6 +18,12 @@ export default function Timebox() {
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [timeboxes, setTimeboxes] = useState<Timebox[]>([]);
   const [selectedTimebox, setSelectedTimebox] = useState<Timebox | undefined>();
+
+  // for styling
+  const screenWidth = Dimensions.get("window").width;
+  const paddingHorizontal = 16;
+  const gap = 8;
+  const timeboxWidth = (screenWidth - 2 * paddingHorizontal - gap) / 2;
 
   const toggleModal = (timebox: Timebox | undefined = undefined) => {
     if (!timebox) {
@@ -62,7 +74,7 @@ export default function Timebox() {
       <View style={styles.timebox_row}>
         {timeboxes.map((timebox, index) => (
           <TouchableOpacity
-            style={styles.timebox}
+            style={[styles.timebox, { width: timeboxWidth }]}
             onPress={() => {
               toggleModal(timebox);
             }}
