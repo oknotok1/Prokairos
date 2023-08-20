@@ -6,7 +6,7 @@ import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
 
-import { Priority } from "./Priotities";
+import { Priority } from "./Priorities";
 import { Timebox } from "./Timebox";
 import TimeBadge from "./TimeBadge";
 

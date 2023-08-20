@@ -53,7 +53,7 @@ export default function Priorities() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} testID="priorities-component">
       <InputModal
         modalVisible={modalVisible}
         toggleModal={toggleModal}
