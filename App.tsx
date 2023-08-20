@@ -29,7 +29,7 @@ export default function App() {
   });
 
   if (!fontsLoaded) {
-    // You might want to render a loading indicator here
+    // Improvement: include render a loading indicator here
     return null;
   }
 

@@ -74,7 +74,8 @@ export default function Timebox() {
       <View style={styles.timebox_row}>
         {timeboxes.map((timebox, index) => (
           <TouchableOpacity
-            style={[styles.timebox, { width: timeboxWidth }]}
+            // style={[styles.timebox, { width: timeboxWidth }]}
+            style={styles.timebox}
             onPress={() => {
               toggleModal(timebox);
             }}
