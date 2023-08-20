@@ -203,36 +203,6 @@ export default function InputModal({
 }
 
 const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-    display: "flex",
-    flexDirection: "column",
-    gap: 16,
-    backgroundColor: "#fff",
-    borderRadius: 8,
-    paddingVertical: 24,
-    marginBottom: 16,
-  },
-  h1: {
-    fontFamily: "Inter_700Bold",
-    fontSize: 16 * 3,
-  },
-  h3: {
-    paddingHorizontal: 16,
-    fontFamily: "Inter_700Bold",
-    fontSize: 16 * 1.5,
-  },
-  p: {
-    fontFamily: "Inter_400Regular",
-    fontSize: 16,
-  },
-  tableRow: {
-    paddingHorizontal: 8,
-    paddingVertical: 16,
-    borderWidth: 1,
-    borderColor: "black",
-    marginBottom: -1,
-  },
   modalView: {
     marginTop: 16 * 4,
     margin: 16,

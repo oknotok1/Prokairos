@@ -136,18 +136,10 @@ const styles = StyleSheet.create({
     paddingVertical: 24,
     marginBottom: 16,
   },
-  h1: {
-    fontFamily: "Inter_700Bold",
-    fontSize: 16 * 3,
-  },
   h3: {
     paddingHorizontal: 16,
     fontFamily: "Inter_700Bold",
     fontSize: 16 * 1.5,
-  },
-  p: {
-    fontFamily: "Inter_400Regular",
-    fontSize: 16,
   },
   priorityRow: {
     paddingBottom: 16 * 1.25,
@@ -172,26 +164,5 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "300",
     fontSize: 16 * 1.125,
-  },
-  priorityBadge: {
-    flexDirection: "row",
-    paddingVertical: 4,
-    paddingHorizontal: 4 * 3,
-    borderRadius: 16,
-    backgroundColor: "#fff",
-    display: "flex",
-    alignItems: "baseline",
-    justifyContent: "center",
-    alignSelf: "flex-start",
-    opacity: 0.75,
-  },
-  priorityBadgeText_hour: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#fff",
-  },
-  priorityBadgeText_minute: {
-    fontSize: 16 * 0.75,
-    color: "#fff",
   },
 });

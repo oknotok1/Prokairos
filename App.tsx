@@ -112,45 +112,9 @@ const styles = StyleSheet.create({
     fontFamily: "Inter_700Bold",
     fontSize: 16 * 3,
   },
-  h3: {
-    fontFamily: "Inter_700Bold",
-    fontSize: 16 * 1.5,
-  },
-  p: {
-    fontFamily: "Inter_400Regular",
-    fontSize: 16,
-  },
   headerDate: {
     fontFamily: "Inter_300Light",
     fontSize: 16,
     marginLeft: 16 / 5,
-  },
-  priorities: {},
-  tableRow: {
-    paddingHorizontal: 8,
-    paddingVertical: 16,
-    borderWidth: 1,
-    borderColor: "black",
-    marginBottom: -1,
-  },
-  timeboxRow: {
-    display: "flex",
-    flexDirection: "row",
-  },
-  timeboxIndex: {
-    width: 16 * 2.5,
-    padding: 8,
-    borderWidth: 1,
-    borderColor: "black",
-    marginBottom: -1,
-    marginLeft: -1,
-  },
-  timeboxValue: {
-    width: "44.75%",
-    padding: 8,
-    borderWidth: 1,
-    borderColor: "black",
-    marginBottom: -1,
-    marginLeft: -1,
   },
 });
