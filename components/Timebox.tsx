@@ -67,10 +67,10 @@ export default function Timebox() {
         setSelectedTimebox={setSelectedTimebox}
       />
       <Text style={styles.h3}>Today</Text>
-      <View style={styles.timebox_columnHeader}>
+      {/* <View style={styles.timebox_columnHeader}>
         <Text>:00</Text>
         <Text>:30</Text>
-      </View>
+      </View> */}
       <View style={styles.timebox_row}>
         {timeboxes.map((timebox, index) => (
           <TouchableOpacity
@@ -119,7 +119,9 @@ const styles = StyleSheet.create({
   },
   timebox: {
     width: "48.75%",
-    justifyContent: "center",
+    // justifyContent: "center",
+    justifyContent: "flex-start",
+    gap: 8,
     padding: 16 * 0.75,
     backgroundColor: "#F4F6FD",
     borderRadius: 8,

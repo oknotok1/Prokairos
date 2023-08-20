@@ -86,11 +86,10 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "flex-start",
-    backgroundColor: "#F5F5F5",
+    // backgroundColor: "#F5F5F5",
   },
   scrollView: {
     width: "100%",
-    // backgroundColor: "#F5F5F5",
   },
   container: {
     width: "100%",

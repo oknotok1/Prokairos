@@ -175,7 +175,7 @@ export default function InputModal({
         </Pressable>
         <TextInput
           style={styles.input}
-          value={selectedPriority?.task}
+          value={selectedPriority?.task || selectedTimebox?.task}
           onChangeText={handleTaskChange()}
           placeholder="Do something"
         />
