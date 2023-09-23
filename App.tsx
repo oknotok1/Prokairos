@@ -12,6 +12,7 @@ import {
   Inter_800ExtraBold,
   Inter_900Black,
 } from "@expo-google-fonts/inter";
+import QuoteOfTheDay from "./components/QuoteOfTheDay";
 import Header from "./components/Header";
 import Timebox from "./components/Timebox";
 import Priorities from "./components/Priorities";
@@ -37,9 +38,11 @@ export default function App() {
     <SafeAreaView style={styles.safeAreaView}>
       <StatusBar style="auto" />
       <ScrollView style={styles.scrollView}>
+        <QuoteOfTheDay />
         <Header />
         <Priorities />
         <Timebox />
+        <QuoteOfTheDay endOfPage />
       </ScrollView>
     </SafeAreaView>
   );
