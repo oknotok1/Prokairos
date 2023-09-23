@@ -56,6 +56,21 @@ export default function Priorities() {
     }
   };
 
+  // clear all priorities from AsyncStorage
+  const clearPriorities = async () => {
+    await AsyncStorage.removeItem("priorities");
+    setTopPriorities([
+      {
+        id: 0,
+        task: "Add a priority",
+        time: new Date(),
+        addNew: true,
+      },
+    ]);
+  };
+
+  // clearPriorities();
+
   const toggleModal = (priority: Priority | undefined = undefined) => {
     if (!priority) {
       setSelectedPriority(undefined);
@@ -140,6 +155,28 @@ export default function Priorities() {
     toggleModal(undefined);
   };
 
+  const deletePriority = async () => {
+    if (!selectedPriority) return;
+
+    // remove the selected priority from the topPriorities array, update the id of each priority, and save the updated array to AsyncStorage
+    const updatedPriorities = topPriorities.filter(
+      (priority) => priority.id !== selectedPriority.id
+    );
+    // ensure that the last priority in the list is the one with .addNew
+    updatedPriorities.forEach((priority, index) => {
+      priority.id = index + 1;
+
+      if (index === updatedPriorities.length - 1) {
+        priority.id = 0;
+        priority.addNew = true;
+      }
+    });
+    await AsyncStorage.setItem("priorities", JSON.stringify(updatedPriorities));
+    setTopPriorities(updatedPriorities);
+
+    toggleModal(undefined);
+  };
+
   const validateInput = () => {
     // Disable save button if values are not valid or set
     const valid =
@@ -157,11 +194,14 @@ export default function Priorities() {
         modalVisible={modalVisible}
         toggleModal={toggleModal}
         validateInput={validateInput}
+        priority
+        topPriorities={topPriorities}
         selectedPriority={selectedPriority}
         setSelectedPriority={setSelectedPriority}
         onPriorityChange={onPriorityChange}
         handleTimeChange={handleTimeChange}
         savePriorities={savePriorities}
+        deletePriority={deletePriority}
       />
       <Text style={styles.h3}>Priority</Text>
       <ScrollView

@@ -14,11 +14,14 @@ interface InputModalProps {
   modalVisible: boolean;
   toggleModal: (priority: Priority | Timebox | undefined) => void;
   validateInput: () => boolean;
+  priority?: boolean;
+  topPriorities?: Priority[];
   selectedPriority?: Priority;
   setSelectedPriority?: (priority: Priority) => void;
   onPriorityChange?: () => (text: string) => void;
   handleTimeChange?: (event: DateTimePickerEvent, selectedDate?: Date) => void;
   savePriorities?: () => void;
+  deletePriority?: () => void;
   timebox?: boolean;
   selectedTimebox?: Timebox;
   setSelectedTimebox?: (timebox: Timebox) => void;
@@ -30,10 +33,13 @@ export default function InputModal({
   modalVisible,
   toggleModal,
   validateInput,
+  priority,
+  topPriorities,
   selectedPriority,
   onPriorityChange,
   handleTimeChange,
   savePriorities,
+  deletePriority,
   timebox,
   selectedTimebox,
   onTimeboxChange,
@@ -84,11 +90,23 @@ export default function InputModal({
             accentColor="#000"
           />
         )}
-        <Button
-          title="Save"
-          onPress={timebox ? updateTimebox : savePriorities}
-          disabled={!validateInput()}
-        />
+        <View style={styles.ctaButtons}>
+          <Button
+            title="Save"
+            onPress={timebox ? updateTimebox : savePriorities}
+            disabled={!validateInput()}
+          />
+          {priority &&
+            topPriorities &&
+            topPriorities.length !== selectedPriority?.id && (
+              <Button
+                title="Delete"
+                onPress={() => {
+                  deletePriority && deletePriority();
+                }}
+              />
+            )}
+        </View>
       </View>
     </Modal>
   );
@@ -135,5 +153,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 8,
     padding: 16,
+  },
+  ctaButtons: {
+    display: "flex",
+    flexDirection: "row",
+    gap: 16,
   },
 });
