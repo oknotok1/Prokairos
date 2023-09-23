@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet } from "react-native";
 import { Button, Modal, Pressable, Text, TextInput, View } from "react-native";
-
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
@@ -154,7 +154,7 @@ export default function InputModal({
             toggleModal(undefined);
           }}
         >
-          <Text>⛌</Text>
+          <MaterialCommunityIcons name="close" color="#000" size={16 * 1.5} />
         </Pressable>
         <TextInput
           style={styles.input}
@@ -174,7 +174,6 @@ export default function InputModal({
             accentColor="#000"
           />
         )}
-
         <Button
           title="Save"
           onPress={timebox ? updateTimebox : handleSubmit}
@@ -209,9 +208,9 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     position: "absolute",
-    top: 8,
-    right: 8,
-    padding: 8,
+    top: 0,
+    right: 0,
+    padding: 16 * 0.75,
   },
   modalHeader: {
     fontSize: 16 * 1.5,
