@@ -19,12 +19,12 @@ interface InputModalProps {
   setSelectedPriority?: React.Dispatch<
     React.SetStateAction<Priority | undefined>
   >;
-  timeboxes?: Timebox[];
-  setTimeboxes?: React.Dispatch<React.SetStateAction<Timebox[]>>;
   selectedTimebox?: Timebox | undefined;
   setSelectedTimebox?: React.Dispatch<
     React.SetStateAction<Timebox | undefined>
   >;
+  timebox?: boolean;
+  updateTimebox?: () => void;
 }
 
 export default function InputModal({
@@ -34,10 +34,10 @@ export default function InputModal({
   setTopPriorities,
   selectedPriority,
   setSelectedPriority,
-  timeboxes,
-  setTimeboxes,
   selectedTimebox,
   setSelectedTimebox,
+  timebox,
+  updateTimebox,
 }: InputModalProps) {
   const handleTaskChange = () => {
     if (selectedPriority && setSelectedPriority) {
@@ -128,23 +128,6 @@ export default function InputModal({
 
       setTopPriorities(updatedPriorities);
       setSelectedPriority(undefined);
-    } else if (
-      selectedTimebox &&
-      setSelectedTimebox &&
-      timeboxes &&
-      setTimeboxes
-    ) {
-      setTimeboxes(
-        timeboxes.map((timebox) => {
-          if (timebox.time.getTime() === selectedTimebox.time.getTime()) {
-            return selectedTimebox;
-          } else {
-            return timebox;
-          }
-        })
-      );
-
-      setSelectedTimebox(undefined);
     }
 
     toggleModal(undefined);
@@ -194,7 +177,7 @@ export default function InputModal({
 
         <Button
           title="Save"
-          onPress={handleSubmit}
+          onPress={timebox ? updateTimebox : handleSubmit}
           disabled={validateInput()}
         />
       </View>
