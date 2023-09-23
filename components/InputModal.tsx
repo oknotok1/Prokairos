@@ -12,127 +12,33 @@ import TimeBadge from "./TimeBadge";
 
 interface InputModalProps {
   modalVisible: boolean;
-  toggleModal: (priority: Priority | undefined) => void;
-  topPriorities?: Priority[];
-  setTopPriorities?: React.Dispatch<React.SetStateAction<Priority[]>>;
-  selectedPriority?: Priority | undefined;
-  setSelectedPriority?: React.Dispatch<
-    React.SetStateAction<Priority | undefined>
-  >;
-  selectedTimebox?: Timebox | undefined;
-  setSelectedTimebox?: React.Dispatch<
-    React.SetStateAction<Timebox | undefined>
-  >;
+  toggleModal: (priority: Priority | Timebox | undefined) => void;
+  validateInput: () => boolean;
+  selectedPriority?: Priority;
+  setSelectedPriority?: (priority: Priority) => void;
+  onPriorityChange?: () => (text: string) => void;
+  handleTimeChange?: (event: DateTimePickerEvent, selectedDate?: Date) => void;
+  savePriorities?: () => void;
   timebox?: boolean;
+  selectedTimebox?: Timebox;
+  setSelectedTimebox?: (timebox: Timebox) => void;
+  onTimeboxChange?: () => (text: string) => void;
   updateTimebox?: () => void;
 }
 
 export default function InputModal({
   modalVisible,
   toggleModal,
-  topPriorities,
-  setTopPriorities,
+  validateInput,
   selectedPriority,
-  setSelectedPriority,
-  selectedTimebox,
-  setSelectedTimebox,
+  onPriorityChange,
+  handleTimeChange,
+  savePriorities,
   timebox,
+  selectedTimebox,
+  onTimeboxChange,
   updateTimebox,
 }: InputModalProps) {
-  const handleTaskChange = () => {
-    if (selectedPriority && setSelectedPriority) {
-      return (text: string) => {
-        const updatedPriority = {
-          ...selectedPriority,
-          task: text,
-        };
-        setSelectedPriority(updatedPriority);
-      };
-    } else if (selectedTimebox && setSelectedTimebox) {
-      return (text: string) => {
-        const updatedTimebox = {
-          ...selectedTimebox,
-          task: text,
-        };
-        setSelectedTimebox(updatedTimebox);
-      };
-    }
-  };
-
-  const handleTimeChange = (
-    event: DateTimePickerEvent,
-    selectedDate?: Date
-  ) => {
-    if (selectedPriority && event.type === "set") {
-      const selectedTime = selectedDate || new Date();
-      const updatedPriority = {
-        ...selectedPriority,
-        time: selectedTime,
-      };
-      setSelectedPriority && setSelectedPriority(updatedPriority);
-    }
-  };
-
-  const validateInput = () => {
-    if (selectedPriority) {
-      if (selectedPriority.task && selectedPriority.time) {
-        return false;
-      }
-    }
-
-    if (selectedTimebox) {
-      if (selectedTimebox.task && selectedTimebox.time) {
-        return false;
-      }
-    }
-
-    return true;
-  };
-
-  const handleSubmit = () => {
-    if (
-      topPriorities &&
-      selectedPriority &&
-      setTopPriorities &&
-      setSelectedPriority
-    ) {
-      if (!selectedPriority) return;
-
-      // make a copy of the topPriorities array to update
-      const updatedPriorities = [...topPriorities];
-
-      // if the priority is new, add it to the end of the list, otherwise update the existing priority in the list
-      const index = updatedPriorities.findIndex(
-        (priority) => priority.id === selectedPriority.id
-      );
-      updatedPriorities[index === -1 ? topPriorities.length : index] =
-        selectedPriority;
-
-      // sort updatedPriorities by time, earliest to latest
-      updatedPriorities.sort((a, b) => {
-        if (!a.time || !b.time) return 0;
-        if (a.time < b.time) return -1;
-        if (a.time > b.time) return 1;
-        return 0;
-      });
-
-      // move the priority with .addNew to the end of the list
-      const addNewIndex = updatedPriorities.findIndex(
-        (priority) => priority.addNew
-      );
-      if (addNewIndex !== -1) {
-        const addNewPriority = updatedPriorities[addNewIndex];
-        updatedPriorities.splice(addNewIndex, 1);
-        updatedPriorities.push(addNewPriority);
-      }
-
-      setTopPriorities(updatedPriorities);
-      setSelectedPriority(undefined);
-    }
-
-    toggleModal(undefined);
-  };
-
   return (
     <Modal
       animationType="slide"
@@ -159,7 +65,11 @@ export default function InputModal({
         <TextInput
           style={styles.input}
           value={selectedPriority?.task || selectedTimebox?.task}
-          onChangeText={handleTaskChange()}
+          onChangeText={
+            timebox
+              ? onTimeboxChange && onTimeboxChange()
+              : onPriorityChange && onPriorityChange()
+          }
           placeholder="Do something"
         />
         {selectedPriority && (
@@ -176,8 +86,8 @@ export default function InputModal({
         )}
         <Button
           title="Save"
-          onPress={timebox ? updateTimebox : handleSubmit}
-          disabled={validateInput()}
+          onPress={timebox ? updateTimebox : savePriorities}
+          disabled={!validateInput()}
         />
       </View>
     </Modal>

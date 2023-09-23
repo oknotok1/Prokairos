@@ -69,6 +69,20 @@ export default function Timebox() {
     }
   };
 
+  const onTimeboxChange = () => {
+    return (text: string) => {
+      if (!selectedTimebox) {
+        return;
+      }
+
+      const updatedTimebox = {
+        ...selectedTimebox,
+        task: text,
+      };
+      setSelectedTimebox(updatedTimebox);
+    };
+  };
+
   const updateTimebox = () => {
     // Find the timebox in the timeboxes array that matches the selectedTimebox
     const updatedTimeboxes = timeboxes.map((timebox) => {
@@ -91,6 +105,14 @@ export default function Timebox() {
     populateTimeboxes();
   };
 
+  const validateInput = () => {
+    // Disable save button if values are not valid or set
+    const valid =
+      selectedTimebox && selectedTimebox.task && selectedTimebox.time;
+
+    return Boolean(valid);
+  };
+
   useEffect(() => {
     populateTimeboxes();
   }, []);
@@ -100,8 +122,10 @@ export default function Timebox() {
       <InputModal
         modalVisible={modalVisible}
         toggleModal={toggleModal}
+        validateInput={validateInput}
         selectedTimebox={selectedTimebox}
         setSelectedTimebox={setSelectedTimebox}
+        onTimeboxChange={onTimeboxChange}
         updateTimebox={updateTimebox}
         timebox
       />

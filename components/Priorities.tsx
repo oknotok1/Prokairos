@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ScrollView,
   StyleSheet,
@@ -6,6 +6,8 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { DateTimePickerEvent } from "@react-native-community/datetimepicker";
 import { LinearGradient } from "expo-linear-gradient";
 
 import InputModal from "./InputModal";
@@ -32,6 +34,28 @@ export default function Priorities() {
     Priority | undefined
   >();
 
+  const getPriorities = async () => {
+    const prioritiesString = await AsyncStorage.getItem("priorities");
+    if (prioritiesString) {
+      const priorities = JSON.parse(prioritiesString);
+      // Convert the time string back to a Date object
+      priorities.forEach((priority: Priority) => {
+        priority.time = new Date(priority.time);
+      });
+
+      setTopPriorities(priorities);
+    } else {
+      setTopPriorities([
+        {
+          id: 0,
+          task: "Add a priority",
+          time: new Date(),
+          addNew: true,
+        },
+      ]);
+    }
+  };
+
   const toggleModal = (priority: Priority | undefined = undefined) => {
     if (!priority) {
       setSelectedPriority(undefined);
@@ -52,15 +76,92 @@ export default function Priorities() {
     setModalVisible(true);
   };
 
+  const onPriorityChange = () => {
+    return (text: string) => {
+      if (!selectedPriority) return;
+
+      const updatedPriority = {
+        ...selectedPriority,
+        task: text,
+      };
+
+      setSelectedPriority(updatedPriority);
+    };
+  };
+
+  const handleTimeChange = (
+    event: DateTimePickerEvent,
+    selectedDate?: Date
+  ) => {
+    if (selectedPriority && event.type === "set") {
+      const selectedTime = selectedDate || new Date();
+      const updatedPriority = {
+        ...selectedPriority,
+        time: selectedTime,
+      };
+      setSelectedPriority(updatedPriority);
+    }
+  };
+
+  const savePriorities = async () => {
+    if (!selectedPriority) return;
+
+    // make a copy of the topPriorities array to update
+    const updatedPriorities = [...topPriorities];
+
+    // if the priority is new, add it to the end of the list, otherwise update the existing priority in the list
+    const index = updatedPriorities.findIndex(
+      (priority) => priority.id === selectedPriority.id
+    );
+    updatedPriorities[index === -1 ? topPriorities.length : index] =
+      selectedPriority;
+
+    // sort updatedPriorities by time, earliest to latest
+    updatedPriorities.sort((a, b) => {
+      if (!a.time || !b.time) return 0;
+      if (a.time < b.time) return -1;
+      if (a.time > b.time) return 1;
+      return 0;
+    });
+
+    // move the priority with .addNew to the end of the list
+    const addNewIndex = updatedPriorities.findIndex(
+      (priority) => priority.addNew
+    );
+    if (addNewIndex !== -1) {
+      const addNewPriority = updatedPriorities[addNewIndex];
+      updatedPriorities.splice(addNewIndex, 1);
+      updatedPriorities.push(addNewPriority);
+    }
+
+    // Save the updated priorities array to AsyncStorage, update the state, and close the modal
+    await AsyncStorage.setItem("priorities", JSON.stringify(updatedPriorities));
+    setTopPriorities(updatedPriorities);
+    toggleModal(undefined);
+  };
+
+  const validateInput = () => {
+    // Disable save button if values are not valid or set
+    const valid =
+      selectedPriority && selectedPriority.task && selectedPriority.time;
+    return Boolean(valid);
+  };
+
+  useEffect(() => {
+    getPriorities();
+  }, []);
+
   return (
     <View style={styles.container} testID="priorities-component">
       <InputModal
         modalVisible={modalVisible}
         toggleModal={toggleModal}
-        topPriorities={topPriorities}
-        setTopPriorities={setTopPriorities}
+        validateInput={validateInput}
         selectedPriority={selectedPriority}
         setSelectedPriority={setSelectedPriority}
+        onPriorityChange={onPriorityChange}
+        handleTimeChange={handleTimeChange}
+        savePriorities={savePriorities}
       />
       <Text style={styles.h3}>Priority</Text>
       <ScrollView

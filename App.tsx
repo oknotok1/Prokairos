@@ -30,7 +30,6 @@ export default function App() {
   });
 
   if (!fontsLoaded) {
-    // Improvement: include render a loading indicator here
     return null;
   }
 
@@ -51,7 +50,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "flex-start",
-    // backgroundColor: "#F5F5F5",
   },
   scrollView: {
     width: "100%",
