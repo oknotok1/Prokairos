@@ -67,15 +67,11 @@ export default function Timebox() {
         setSelectedTimebox={setSelectedTimebox}
       />
       <Text style={styles.h3}>Today</Text>
-      {/* <View style={styles.timebox_columnHeader}>
-        <Text>:00</Text>
-        <Text>:30</Text>
-      </View> */}
       <View style={styles.timebox_row}>
         {timeboxes.map((timebox, index) => (
           <TouchableOpacity
-            // style={[styles.timebox, { width: timeboxWidth }]}
-            style={styles.timebox}
+            style={[styles.timebox, { width: timeboxWidth }]}
+            // style={styles.timebox}
             onPress={() => {
               toggleModal(timebox);
             }}
@@ -105,11 +101,6 @@ const styles = StyleSheet.create({
   h3: {
     fontFamily: "Inter_700Bold",
     fontSize: 16 * 1.5,
-  },
-  timebox_columnHeader: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-around",
   },
   timebox_row: {
     display: "flex",
