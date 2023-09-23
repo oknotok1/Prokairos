@@ -31,6 +31,13 @@
         "projectId": "8c5e2ec4-18da-4df0-9f2a-6b4e02e28608"
       }
     },
-    "owner": "oknotok1"
+    "owner": "oknotok1",
+    "privacy": "public",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/8c5e2ec4-18da-4df0-9f2a-6b4e02e28608"
+    }
   }
 }
